@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
-import { View, Text, TouchableOpacity, FlatList, StyleSheet } from 'react-native';
+import { Modal, View, Text, TouchableOpacity, FlatList, Alert } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-
+import {styles} from '@/styles/flashcard.styles'
 // Define types for our flashcard set
 type FlashcardSet = {
   id: string;
@@ -11,15 +11,27 @@ type FlashcardSet = {
 
 const Flashcard = () => {
   const [flashcardSets, setFlashcardSets] = useState<FlashcardSet[]>([
-    { id: '1', title: 'Biology Terms', count: 42 },
-    { id: '2', title: 'French Vocabulary', count: 36 },
-    { id: '3', title: 'History Dates', count: 28 },
-    { id: '4', title: 'Math Formulas', count: 15 },
-    { id: '5', title: 'Programming Concepts', count: 31 },
+    { id: '1', title: 'Software Engineering', count: 42 },
+    { id: '2', title: 'Big Data Processing', count: 36 },
+    { id: '3', title: 'Database Design', count: 28 },
+    { id: '4', title: 'Research Methodology', count: 15 },
+    { id: '5', title: 'Data Analytics', count: 31 },
   ]);
 
   const [selectedSet, setSelectedSet] = useState<string | null>(null);
+  const [deleteModalVisible, setDeleteModalVisible] = useState(false);
+  const [setToDelete, setSetToDelete] = useState<string | null>(null);
+  const confirmDelete = (setId: string) => {
+    setSetToDelete(setId);
+    setDeleteModalVisible(true);
+  };
 
+  const handleDelete = () => {
+    // Your actual delete logic here
+    Alert.alert('Success', 'Flashcard set deleted');
+    setDeleteModalVisible(false);
+  };
+  
   // Properly type the renderItem function
   const renderItem = ({ item }: { item: FlashcardSet }) => (
     <TouchableOpacity
@@ -27,15 +39,18 @@ const Flashcard = () => {
         styles.setItem,
         selectedSet === item.id && styles.selectedSetItem
       ]}
-      onPress={() => setSelectedSet(item.id)}
+      onPress={() => selectedSet !==item.id ? setSelectedSet(item.id): setSelectedSet(null)}
     >
       <View style={styles.setInfo}>
         <Text style={styles.setTitle}>{item.title}</Text>
         <Text style={styles.setCount}>{item.count} cards</Text>
       </View>
-      {selectedSet === item.id && (
-        <Ionicons name="checkmark-circle" size={24} color="#4CAF50" />
-      )}
+      {selectedSet === item.id &&
+      (<View style={styles.setItemButtonContainer}>
+        <TouchableOpacity style={styles.setItemButtonEdit}><Text style={styles.setItemButtonText}>Edit</Text></TouchableOpacity>
+        <TouchableOpacity style={styles.setItemButtonTest}><Text style={styles.setItemButtonText}>Test</Text></TouchableOpacity>
+        <TouchableOpacity><Ionicons name="trash" style={styles.deleteButton} size={32} onPress={() => confirmDelete(item.id)} /></TouchableOpacity>
+      </View>)}
     </TouchableOpacity>
   );
 
@@ -48,82 +63,50 @@ const Flashcard = () => {
         renderItem={renderItem}
         keyExtractor={(item: FlashcardSet) => item.id}
         contentContainerStyle={styles.listContainer}
+        ListFooterComponent={
+          <TouchableOpacity 
+            style={styles.confirmButton}
+          >
+            <Text style={styles.confirmButtonText}>
+              Create New Set
+            </Text>
+          </TouchableOpacity>
+        }
       />
 
-      <TouchableOpacity 
-        style={[
-          styles.confirmButton,
-          !selectedSet && styles.confirmButtonDisabled
-        ]}
-        disabled={!selectedSet}
+      <Modal
+        visible={deleteModalVisible}
+        transparent={true}
+        animationType="fade"
+        onRequestClose={() => setDeleteModalVisible(false)}
       >
-        <Text style={styles.confirmButtonText}>
-          {selectedSet ? 'Start Studying' : 'Select a Set'}
-        </Text>
-      </TouchableOpacity>
+        <View style={styles.modalOverlay}>
+          <View style={styles.modalContent}>
+            <Text style={styles.modalTitle}>Delete Set</Text>
+            <Text style={styles.modalMessage}>
+              Are you sure you want to delete this flashcard set? This action cannot be undone.
+            </Text>
+            
+            <View style={styles.modalButtons}>
+              <TouchableOpacity 
+                style={[styles.modalButton, styles.cancelButton]}
+                onPress={() => setDeleteModalVisible(false)}
+              >
+                <Text style={styles.cancelText}>Cancel</Text>
+              </TouchableOpacity>
+              
+              <TouchableOpacity 
+                style={[styles.modalButton, styles.deleteConfirmButton]}
+                onPress={handleDelete}
+              >
+                <Text style={styles.deleteConfirmText}>Delete</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        </View>
+      </Modal>
     </View>
   );
 };
-
-const styles = StyleSheet.create({
-    container: {
-      flex: 1,
-      backgroundColor: '#000',
-      padding: 20,
-    },
-    header: {
-      color: '#FFF',
-      fontSize: 24,
-      fontWeight: 'bold',
-      marginBottom: 20,
-      textAlign: 'center',
-    },
-    listContainer: {
-      paddingBottom: 20,
-    },
-    setItem: {
-      backgroundColor: '#1E1E1E',
-      borderWidth: 1,
-      borderColor: '#FFF',
-      borderRadius: 10,
-      padding: 16,
-      marginBottom: 12,
-      flexDirection: 'row',
-      justifyContent: 'space-between',
-      alignItems: 'center',
-    },
-    selectedSetItem: {
-      borderColor: '#4CAF50',
-      borderWidth: 2,
-    },
-    setInfo: {
-      flex: 1,
-    },
-    setTitle: {
-      color: '#FFF',
-      fontSize: 18,
-      fontWeight: '600',
-      marginBottom: 4,
-    },
-    setCount: {
-      color: '#AAA',
-      fontSize: 14,
-    },
-    confirmButton: {
-      backgroundColor: '#4CAF50',
-      padding: 16,
-      borderRadius: 10,
-      alignItems: 'center',
-      marginTop: 10,
-    },
-    confirmButtonDisabled: {
-      backgroundColor: '#333',
-    },
-    confirmButtonText: {
-      color: '#FFF',
-      fontSize: 18,
-      fontWeight: 'bold',
-    },
-  });
 
 export default Flashcard;

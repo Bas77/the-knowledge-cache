@@ -7,8 +7,8 @@ import { useRouter } from 'expo-router';
 const HomePage = () => {
   // Sample data for recent sets and statistics
   const recentSets = [
-    { id: '1', title: 'Biology Terms', progress: 65 },
-    { id: '2', title: 'French Verbs', progress: 42 },
+    { id: '1', title: 'Software Engineering', progress: 65 },
+    { id: '2', title: 'Big Data Processing', progress: 42 },
   ];
 
   const stats = {

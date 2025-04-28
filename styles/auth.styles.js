@@ -94,7 +94,7 @@ export const styles = StyleSheet.create({
   },
   googleButtonText: {
     color: COLORS.surfaceLight,
-    marginLeft: 10,
+    marginLeft: 7,
     fontSize: 16,
     fontFamily: 'Poppins-SemiBold'
   },

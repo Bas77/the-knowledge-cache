@@ -1,9 +1,10 @@
-import {View, Text} from 'react-native'
+import {View, Text, TouchableOpacity } from 'react-native'
 import { Redirect, router, useRouter } from 'expo-router';
+import {styles} from '@/styles/auth.styles'
 export default function Profile(){
     return(
         <View style={{flex: 1, alignItems: 'center', justifyContent: 'center',}} >
-            <Text style={{ padding: 10, backgroundColor: 'black'}} onPress={()=> router.push('/(auth)/login')}>test</Text>
+            <TouchableOpacity style={styles.button} onPress={()=> router.push('/(auth)/login')}><Text>Sign out</Text></TouchableOpacity>
         </View>
         
     )
