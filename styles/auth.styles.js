@@ -94,7 +94,7 @@ export const styles = StyleSheet.create({
   },
   googleButtonText: {
     color: COLORS.surfaceLight,
-    marginLeft: 7,
+    marginLeft: 10,
     fontSize: 16,
     fontFamily: 'Poppins-SemiBold'
   },
@@ -119,5 +119,32 @@ export const styles = StyleSheet.create({
     top: 20, 
     left: 20, 
     zIndex: 1, 
+  },
+  modalContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: 'white',
+    padding: 20,
+  },
+  modalTitle: {
+    fontSize: 20,
+    fontWeight: 'bold',
+    marginBottom: 20,
+  },
+  pickImageButton: {
+    backgroundColor: COLORS.secondary,
+    padding: 10,
+    borderRadius: 10,
+    marginBottom: 20,
+  },
+  profileImage: {
+    width: 100,
+    height: 100,
+    borderRadius: 50,
+    marginBottom: 10,
+  },
+  pickImageText: {
+    color: 'white',
   },
 });

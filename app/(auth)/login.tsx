@@ -22,8 +22,7 @@ export default function login(){
           });
           await new Promise((resolve) => setTimeout(resolve, 500));
           if (error) throw error;
-    
-          // Handle successful sign-in (e.g., redirect, show message)
+
           Alert.alert('Success', 'You are now signed in!');
         } catch (error:any) {
           Alert.alert('Error', error.message);

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, StyleSheet, Alert } from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, StyleSheet, Alert, ActivityIndicator } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { styles } from '../../styles/auth.styles.js';
 import { COLORS } from '@/constants/theme';
@@ -10,21 +10,25 @@ export default function SignUp({ navigation }: { navigation: any }) {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
-const [loading, setLoading] = useState(false)
+  const [isLoading, setLoading] = useState(false)
 
-    async function signUpWithEmail() {
-        setLoading(true)
-        const {
-          data: { session },
-          error,
-        } = await supabase.auth.signUp({
-          email: email,
-          password: password,
-        })
-        await new Promise((resolve) => setTimeout(resolve, 500));
-        if (error) Alert.alert(error.message)
-        setLoading(false)
-      }
+  
+  async function signUpWithEmail() {
+      setLoading(true)
+      const {
+        data: { session },
+        error,
+      } = await supabase.auth.signUp({
+        email: email,
+        password: password,
+      })
+      await new Promise((resolve) => setTimeout(resolve, 500));
+      if (error) Alert.alert(error.message)
+      const user = supabase.auth.getUser()
+      const userID = user
+      setLoading(false)
+  }
+      
     
   return (
     <View style={styles.container}>
@@ -69,7 +73,7 @@ const [loading, setLoading] = useState(false)
 
       {/* Sign Up Button */}
       <TouchableOpacity style={styles.button} onPress={signUpWithEmail}>
-        <Text style={styles.buttonText}>Sign Up</Text>
+        {isLoading ? (<ActivityIndicator size='large' color="#000"/>):<Text style={styles.buttonText}>Sign Up</Text>}
       </TouchableOpacity>
 
       {/* Navigate to Login Page */}
