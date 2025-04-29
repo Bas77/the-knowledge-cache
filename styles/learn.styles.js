@@ -9,9 +9,39 @@ export const styles = StyleSheet.create({
   },
   header: {
     color: '#FFF',
+    alignItems: 'center',
+    justifyContent: 'center',
     fontSize: 28,
     fontWeight: 'bold',
+    marginTop: 20,
     marginBottom: 20,
+    flex: 1,
+    textAlign: 'center'
+  },
+  header2: {
+    color: '#FFF',
+    alignItems: 'center',
+    justifyContent: 'center',
+    fontSize: 28,
+    fontWeight: 'bold',
+    marginTop: 20,
+    marginBottom: 20,
+    // flex: 1,
+    textAlign: 'center'
+  },
+  headerContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 20,
+    justifyContent: 'center'
+  },
+  backButton: {
+    // position: 'absolute',
+    marginRight: 12,
+    padding: 8,
+  },
+  spacer: {
+    width: 40, // Same as backButton for symmetry
   },
   listContainer: {
     paddingBottom: 30,
@@ -79,5 +109,6 @@ export const styles = StyleSheet.create({
     paddingHorizontal: 16,
     paddingTop: 12,
     fontFamily: 'System'
-  }
+  },
+  
 });

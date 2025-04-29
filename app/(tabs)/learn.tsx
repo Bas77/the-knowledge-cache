@@ -3,13 +3,13 @@ import { View, Text, FlatList, TouchableOpacity } from 'react-native';
 import { useRouter } from 'expo-router';
 import { styles } from '@/styles/learn.styles';
 import { supabase } from '@/lib/supabase';
-const topic = [
-  { id: '1', title: 'Software Engineering' },
-  { id: '2', title: 'Big Data Processing' },
-  { id: '3', title: 'Database Design' },
-  { id: '4', title: 'Research Methodology' },
-  { id: '5', title: 'Data Analytics' },
-];
+// const topic = [
+//   { id: '1', title: 'Software Engineering' },
+//   { id: '2', title: 'Big Data Processing' },
+//   { id: '3', title: 'Database Design' },
+//   { id: '4', title: 'Research Methodology' },
+//   { id: '5', title: 'Data Analytics' },
+// ];
 
 
 
@@ -33,7 +33,7 @@ const LearnHome = () => {
       },[]);
   return (
     <View style={styles.container}>
-      <Text style={styles.header}>Learn by Subject</Text>
+      <Text style={styles.header2}>Learn by Subject</Text>
       <FlatList
         data={subjects}
         keyExtractor={(item) => item.id}

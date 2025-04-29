@@ -6,13 +6,32 @@ import {COLORS} from '@/constants/theme'
 import { Ionicons } from '@expo/vector-icons'
 import { useRouter } from 'expo-router';
 import { supabase } from '@/lib/supabase';
+import { useAuth } from '@/contexts/AuthContext';
+import { User } from '@supabase/supabase-js';
 
 export default function login(){
+    const {user, setGlobalUser} = useAuth();
+    const [userLocal, setUser] = useState<User | null>(null);
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const router = useRouter();
     const [isLoading, setIsLoading] = useState(false);
 
+    const getUser = async () => {
+        // Check if the user is logged in
+        const { data, error } = await supabase.auth.getUser();
+    
+        if (error) {
+          console.error("Error getting user:", error);
+          return;
+        }
+    
+        if (data?.user) {
+          setUser(data.user);
+        } else {
+          Alert.alert("User not logged in.");
+        }
+      };
     const handleSignIn = async () => {
         setIsLoading(true);
         try {
@@ -22,8 +41,18 @@ export default function login(){
           });
           await new Promise((resolve) => setTimeout(resolve, 500));
           if (error) throw error;
-
-          Alert.alert('Success', 'You are now signed in!');
+          setGlobalUser(data.user);
+          if(data.user){
+            router.replace('../(tabs)');
+          } else{
+            await new Promise((resolve) => setTimeout(resolve, 500));
+            setGlobalUser(data.user);
+            if(!user){
+                Alert.alert('Login failed, please try again');
+                router.reload();
+            }
+            
+          }
         } catch (error:any) {
           Alert.alert('Error', error.message);
         } finally{
@@ -32,7 +61,7 @@ export default function login(){
       };
 
     const test = async()=> {
-        router.push('/(tabs)')
+        router.replace('/(tabs)')
     }
     return(
         <View style={styles.container}>

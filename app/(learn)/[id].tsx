@@ -3,6 +3,8 @@ import { View, Text, FlatList, TouchableOpacity } from 'react-native';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { styles } from '@/styles/learn.styles';
 import { supabase } from '@/lib/supabase';
+import { Ionicons } from '@expo/vector-icons';
+import { COLORS } from '@/constants/theme';
 
 
   const TopicList = () => {
@@ -28,7 +30,16 @@ import { supabase } from '@/lib/supabase';
     
   return (
     <View style={styles.container}>
+    <View style={styles.headerContainer}>
+      <TouchableOpacity 
+        onPress={() => router.back()}
+        style={styles.backButton}
+      >
+        <Ionicons name="arrow-back" size={24} color={COLORS.primary} />
+      </TouchableOpacity>
       <Text style={styles.header}>Topics</Text>
+      <View style={styles.spacer} />
+    </View>
       <FlatList
         data={topics}
         keyExtractor={(item) => item.id}

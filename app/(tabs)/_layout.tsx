@@ -1,6 +1,8 @@
-import { Tabs } from 'expo-router';
+import { Tabs, useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { COLORS } from '../../constants/theme';
+import React, { useEffect, useState } from 'react';
+import { supabase } from '@/lib/supabase';
   
 const tabScreens = [
   { name: 'index', title: 'Home', icon: 'home' },
@@ -10,6 +12,24 @@ const tabScreens = [
 ];
 
 export default function TabLayout() {
+  const router = useRouter();
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    const checkSession = async () => {
+      const { data: { session }, error } = await supabase.auth.getSession();
+      console.log(session);
+      if (error || !session) {
+        // If no session, navigate to login page
+        router.replace('/(auth)/login');  // Adjust the route as per your folder structure
+      } else {
+        // If session exists, proceed with the rest of the app
+        setIsLoading(false);
+      }
+    };
+
+    checkSession();
+  }, []);
   return (
     <Tabs
       screenOptions={{

@@ -2,12 +2,13 @@ import 'dotenv/config';
 
 export default {
   expo: {
-    name: "your-app-name",
-    slug: "your-app-name",
+    name: "the-knowledge-cache",
+    slug: "the-knowledge-cache",
     version: "1.0.0",
     extra: {
-      supabaseUrl: process.env.SUPABASE_URL,
-      supabaseAnonKey: process.env.SUPABASE_ANON_KEY,
+      SUPABASE_URL: process.env.SUPABASE_URL,
+      SUPABASE_ANON_KEY: process.env.SUPABASE_ANON_KEY,
+      SUPABASE_STORAGE_URL: process.env.SUPABASE_STORAGE_URL
     },
   },
 };

@@ -1,28 +1,145 @@
-import React from 'react';
-import { View, Text, TouchableOpacity, StyleSheet, Image, ScrollView } from 'react-native';
+import React, { useEffect, useState } from 'react';
+import { View, Text, TouchableOpacity, StyleSheet, Image, ScrollView, Alert } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { COLORS } from '../../constants/theme';
 import { useRouter } from 'expo-router';
+import { useAuth } from '@/contexts/AuthContext';
+import { supabase } from '@/lib/supabase';
+
 
 const ProfilePage = () => {
   const router = useRouter();
+  const { user, setGlobalUser } = useAuth();
+  const [profile, setProfile] = useState<Profile | null>(null)
 
-  // Placeholder data (simulate what you'll fetch from backend)
-  const user = {
-    username: 'Lapis',
-    email: 'dominikus.ramli@binus.ac.id',
-    avatar: 'https://i.pinimg.com/736x/01/b3/87/01b3879be4e77405e4ec69b16e0b0304.jpg', // Placeholder image
-    joinedDate: 'May 2025',
+  
+  type Profile = {
+    name: string;
+    profile_picture: string | null;
+    created_at: string;
+    formatted_date?: string;
+
   };
 
+  const formatDate = (dateString: string) => {
+    const date = new Date(dateString);
+    return date.toLocaleString('default', { 
+      month: 'long', 
+      year: 'numeric' 
+    });
+  };
+
+  const getProfile = async () => {
+    try {
+      const { data, error } = await supabase
+        .from('users')
+        .select('name, profile_picture, created_at')
+        .eq('id', user?.id)
+        .single();
+  
+      if (error) throw error;
+      if (!data) return;
+      const storagePath = data.profile_picture.includes('profile-pictures/')
+        ? data.profile_picture.split('profile-pictures/')[1]
+        : data.profile_picture;
+      // Set initial state
+      const profileData: Profile = {
+        name: data.name,
+        profile_picture: null, // Default to null
+        created_at: data.created_at,
+        formatted_date: formatDate(data.created_at),
+      };
+  
+      // Only try to get URL if path exists
+      if (storagePath) {
+        const pictureUrl = await getProfilePicture(storagePath);
+        profileData.profile_picture = pictureUrl;
+      }
+  
+      setProfile(profileData);
+  
+    } catch (error) {
+      console.error('Error fetching profile:', error);
+      Alert.alert('Error', 'Failed to load profile');
+    }
+  };
+  
+  const getProfilePicture = async (filePath: string): Promise<string | null> => {
+    try {
+      // 1. First check if file exists
+      const { data: fileList } = await supabase.storage
+        .from('profile-pictures')
+        .list('', {
+          search: filePath
+        });
+  
+      if (!fileList || fileList.length === 0) {
+        console.log('File not found:', filePath);
+        return null;
+      }
+  
+      // 2. Get signed URL if file exists
+      const { data, error } = await supabase.storage
+        .from('profile-pictures')
+        .createSignedUrl(filePath, 3600); // 1 hour expiration
+  
+      if (error) throw error;
+      return data?.signedUrl || null;
+  
+    } catch (error) {
+      console.error('Error getting signed URL:', error);
+      return null;
+    }
+  };
+
+  const handleLogout = async () => {
+    try {
+      // 1. Sign out from Supabase
+      const { error } = await supabase.auth.signOut();
+      
+      if (error) throw error;
+      
+      // 2. Clear local user state
+      setGlobalUser(null);
+      
+      // 3. Navigate to login screen
+      router.replace('/(auth)/login');
+      
+    } catch (error) {
+      if (error instanceof Error) {
+        Alert.alert('Logout Failed', error.message);
+        console.error('Logout error:', error.message);
+      } else {
+        Alert.alert('Logout Failed', 'An unknown error occurred');
+        console.error('Unknown logout error:', error);
+      }
+    }
+  }
+  useEffect(() => {
+
+    getProfile();
+    console.log(profile?.profile_picture);
+  }, []);
+  
   return (
     <ScrollView style={styles.container}>
       {/* Profile Header */}
       <View style={styles.profileHeader}>
-        <Image source={{ uri: user.avatar }} style={styles.avatar} />
-        <Text style={styles.name}>{user.username}</Text>
-        <Text style={styles.email}>{user.email}</Text>
-        <Text style={styles.joined}>Joined {user.joinedDate}</Text>
+      {profile?.profile_picture ? (
+        <Image
+        source={{ uri: profile.profile_picture }}
+        style={styles.avatar}
+        defaultSource={require('@/assets/images/icon.png')}
+        />
+      ) : (
+        <Image
+        source={require('@/assets/images/icon.png')}
+        style={styles.avatar}
+        />
+        )}
+        <Text style={styles.name}>{profile?.name}</Text>
+        <Text style={styles.email}>{user?.email}</Text>
+        <Text style={styles.joined}>Joined {profile?.formatted_date}</Text>
       </View>
 
       {/* Profile Actions */}
@@ -37,7 +154,7 @@ const ProfilePage = () => {
           <Text style={styles.actionText}>Settings</Text>
         </TouchableOpacity>
 
-        <TouchableOpacity style={[styles.actionCard, { borderColor: '#FF5C5C' }]} onPress={()=> router.push('/(auth)/login')} >
+        <TouchableOpacity style={[styles.actionCard, { borderColor: '#FF5C5C' }]} onPress={handleLogout} >
           <Ionicons name="log-out-outline" size={24} color="#FF5C5C" />
           <Text style={[styles.actionText, { color: '#FF5C5C' }]}>Log Out</Text>
         </TouchableOpacity>

@@ -41,7 +41,7 @@ const HomePage = () => {
         
         <TouchableOpacity 
           style={styles.actionCard}
-          onPress={() => router.push('/(tabs)/learna')}
+          onPress={() => router.push('/(tabs)/learn')}
         >
           <Ionicons name="book" size={32} color={COLORS.primary} />
           <Text style={styles.actionText}>Continue</Text>
