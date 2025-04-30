@@ -8,20 +8,6 @@ import { COLORS } from '@/constants/theme';
 import { router } from 'expo-router';
 import { useIsFocused } from '@react-navigation/native';
 
-// Define types for our flashcard set
-type FlashcardCount = { count: number };
-
-type FlashcardSet = {
-  id: string;
-  title: string;
-  card_count: number;
-  flashcards: FlashcardCount[];
-};
-
-type UserRepoRow = {
-  set_id: string;
-  sets: FlashcardSet;
-};
 
 const Flashcard = () => {
   const [sets, setSets] = useState<any[]>([]);
@@ -57,7 +43,8 @@ const Flashcard = () => {
         .select(`
           id,
           title,
-          owner_id,
+          users:owner_id(name),
+          description,
           flashcards(count)
         `)
         .eq('is_public', true)
@@ -85,7 +72,8 @@ const Flashcard = () => {
         .select(`
           id,
           title,
-          owner_id,
+          users:owner_id(name),
+          description,
           flashcards(count)
         `)
         .eq('is_public', true)
@@ -101,13 +89,6 @@ const Flashcard = () => {
     setSets(setsWithCounts); 
   }
  
-  const [selectedSet, setSelectedSet] = useState<string | null>(null);
-  const [deleteModalVisible, setDeleteModalVisible] = useState(false);
-  const [setToDelete, setSetToDelete] = useState<string | null>(null);
-  const confirmDelete = (setId: string) => {
-    setSetToDelete(setId);
-    setDeleteModalVisible(true);
-  };
 
   const addFlashcard = async (setId: string) => {
     console.log(setId);
@@ -125,52 +106,53 @@ const Flashcard = () => {
           console.log('Inserted:', data);
         }
   }
-
-  const handleDelete = () => {
-    // Your actual delete logic here
-    Alert.alert('Success', 'Flashcard set deleted');
-    setDeleteModalVisible(false);
-  };
   
-  // Properly type the renderItem function
-  const renderItem = ({ item }: { item: FlashcardSet }) => (
-    <TouchableOpacity
-      style={[
-        styles.setItem,
-        selectedSet === item.id && styles.selectedSetItem
-      ]}
-      onPress={() => selectedSet !==item.id ? setSelectedSet(item.id): setSelectedSet(null)}
-    >
-      <View style={styles.setInfo}>
-        <Text style={styles.setTitle}>{item.title}</Text>
-        <Text style={styles.setCount}>{item.card_count} cards</Text>
-      </View>
-      {selectedSet === item.id &&
-      (<View style={styles.setItemButtonContainer}>
-        <TouchableOpacity style={styles.setItemButtonEdit} onPress={() => addFlashcard(selectedSet)}><Text style={styles.setItemButtonText}>Add</Text></TouchableOpacity>
-        {/* <TouchableOpacity><Ionicons name="trash" style={styles.deleteButton} size={32} onPress={() => confirmDelete(item.id)} /></TouchableOpacity> */}
-      </View>)}
-    </TouchableOpacity>
-  );
 
   return (
     <View style={styles.container}>
-      <View style={styles.headerContainer}>
-        <TouchableOpacity 
-        style={styles.searchButton}
-        onPress={() => router.back()}
-        >
-          <Ionicons name="arrow-back" size={32}  color={COLORS.primary}/>
+      <View style={styles.header}>
+        <TouchableOpacity onPress={() => router.back()}>
+          <Ionicons name="arrow-back" size={28} color={COLORS.primary} />
         </TouchableOpacity>
-        <Text style={styles.header}>Search Flashcard Set</Text>
-        
+        <Text style={styles.headerTitle}>Discover Sets</Text>
+        <View style={{ width: 28 }} /> 
       </View>
-      <FlatList
-        data={sets}
-        renderItem={renderItem}
-        keyExtractor={(item: FlashcardSet) => item.id}
-        contentContainerStyle={styles.listContainer}
-      />
+
+        <FlatList
+          data={sets}
+          renderItem={({ item }) => (
+            <View style={styles.card}>
+              <View style={styles.cardHeader}>
+                <Text style={styles.cardTitle}>{item.title}</Text>
+                <Text style={styles.cardCount}>{item.card_count} cards</Text>
+              </View>
+              
+              {item.description && (
+                <Text style={styles.cardDescription} numberOfLines={2}>
+                  {item.description}
+                </Text>
+              )}
+
+              <View style={styles.cardFooter}>
+                <Text style={styles.creatorText}>By {item.users?.name}</Text>
+                <TouchableOpacity 
+                  style={styles.addButton}
+                  onPress={() => addFlashcard(item.id)}
+                >
+                  <Text style={styles.addButtonText}>Add to Collection</Text>
+                </TouchableOpacity>
+              </View>
+            </View>
+          )}
+          keyExtractor={(item) => item.id.toString()}
+          contentContainerStyle={styles.listContainer}
+          ListEmptyComponent={
+            <View style={styles.emptyContainer}>
+              <Ionicons name="search" size={48} color={COLORS.textSecondary} />
+              <Text style={styles.emptyText}>No public sets available</Text>
+            </View>
+          }
+        />
     </View>
   );
 };

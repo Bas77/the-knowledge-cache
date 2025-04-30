@@ -1,10 +1,10 @@
 import React, { useState, useRef } from 'react';
-import { View, Text, TouchableOpacity, Animated, Dimensions, Pressable } from 'react-native';
+import { View, Text, TouchableOpacity, Animated, Dimensions, Pressable, Modal } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { COLORS } from '@/constants/theme';
 import { router } from 'expo-router';
 import { styles } from '@/styles/(flashcard)/review.styles';
-
+// import {changeNavigationBarColor} from 'react-native-navigation-bar-color';
 const { width } = Dimensions.get('window');
 
 const flashcards = [
@@ -16,6 +16,7 @@ const flashcards = [
 const ReviewPage = () => {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [flipped, setFlipped] = useState(false);
+  const [showHelpModal, setShowHelpModal] = useState(false);
   const flipAnimation = useRef(new Animated.Value(0)).current;
   const slideAnimation = useRef(new Animated.Value(0)).current;
 
@@ -117,9 +118,19 @@ const ReviewPage = () => {
     })
   };
 
+
   return (
     <Pressable style={styles.container} onLongPress={handlePress} onPress={handleSinglePress}>
-      <Text style={styles.header}>Review Flashcards</Text>
+      <View style={styles.headerContainer}>
+        <Text style={styles.header}>Review Flashcards</Text>
+        <TouchableOpacity 
+          style={styles.helpButton}
+          onPress={() => setShowHelpModal(true)}
+        >
+          <Ionicons name="help-circle" size={32} color={COLORS.primary} />
+        </TouchableOpacity>
+      </View>
+
 
       <TouchableOpacity
         activeOpacity={1}
@@ -149,7 +160,7 @@ const ReviewPage = () => {
           onPress={handlePrev}
           disabled={currentIndex === 0}
         >
-          <Ionicons name="arrow-back" size={28} color={currentIndex === 0 ? COLORS.primary : 'White'} />
+          <Ionicons name="arrow-back" size={28} color={currentIndex === 0 ? 'grey' : 'White'} />
         </TouchableOpacity>
 
         <TouchableOpacity style={styles.flipButton} onPress={flipCard}>
@@ -162,13 +173,47 @@ const ReviewPage = () => {
           onPress={handleNext}
           disabled={currentIndex === flashcards.length - 1}
         >
-          <Ionicons name="arrow-forward" size={28} color={currentIndex === flashcards.length - 1 ? COLORS.primary : 'White'} />
+          <Ionicons name="arrow-forward" size={28} color={currentIndex === flashcards.length - 1 ? 'grey' : 'White'} />
         </TouchableOpacity>
       </View>
 
       <TouchableOpacity style={styles.backButton} onPress={() => router.replace('(tabs)/flashcard')}>
         <Text style={styles.backText}>Back to Sets</Text>
       </TouchableOpacity>
+      <Modal
+        visible={showHelpModal}
+        transparent={true}
+        animationType="fade"
+        onRequestClose={() => setShowHelpModal(false)}
+      >
+        <View style={styles.modalOverlay}>
+          <View style={styles.modalContent}>
+            <Text style={styles.modalTitle}>Flashcard Gestures</Text>
+            
+            <View style={styles.helpItem}>
+              <Ionicons name="repeat" size={24} color={COLORS.primary} />
+              <Text style={styles.helpText}>Double tap anywhere to flip the card</Text>
+            </View>
+            
+            <View style={styles.helpItem}>
+              <Ionicons name="arrow-redo" size={24} color={COLORS.primary} />
+              <Text style={styles.helpText}>Long press left side to go back</Text>
+            </View>
+            
+            <View style={styles.helpItem}>
+              <Ionicons name="arrow-undo" size={24} color={COLORS.primary} />
+              <Text style={styles.helpText}>Long press right side to go forward</Text>
+            </View>
+
+            <TouchableOpacity 
+              style={styles.modalCloseButton}
+              onPress={() => setShowHelpModal(false)}
+            >
+              <Text style={styles.modalCloseText}>Got it!</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      </Modal>
     </Pressable>
   );
 };

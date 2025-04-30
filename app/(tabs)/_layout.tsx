@@ -8,7 +8,7 @@ import { ScrollView } from 'react-native';
 const tabScreens = [
   { name: 'index', title: 'Home', icon: 'home' },
   { name: 'learn', title: 'Learn', icon: 'book' },
-  { name: 'flashcard', title: 'Flashcards', icon: 'folder-open' },
+  { name: 'flashcard', title: 'Flashcards', icon: 'albums' },
   { name: 'profile', title: 'Profile', icon: 'person' },
 ];
 

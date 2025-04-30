@@ -98,7 +98,7 @@ export default function login(){
 
             <TouchableOpacity style={styles.googleButton} onPress={test}>
             <Ionicons name="logo-google" size={24} color={COLORS.surfaceLight} />
-            <Text style={styles.googleButtonText}>Continue with Google</Text>
+            <Text style={styles.googleButtonText} disabled={true}>Continue with Google</Text>
             </TouchableOpacity>
 
             <TouchableOpacity onPress={() => router.push('./signup')}>

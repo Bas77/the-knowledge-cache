@@ -6,7 +6,6 @@ import { useRouter } from 'expo-router';
 import { useAuth } from '@/contexts/AuthContext';
 import { supabase } from '@/lib/supabase';
 
-
 const ProfilePage = () => {
   const router = useRouter();
   const { user, setGlobalUser } = useAuth();

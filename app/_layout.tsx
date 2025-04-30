@@ -1,8 +1,9 @@
-import { Slot, Stack } from "expo-router";
+import { Stack } from "expo-router";
 import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
 import { useFonts } from 'expo-font';
 import { AuthProvider } from "@/contexts/AuthContext";
 import { ActivityIndicator, ScrollView } from "react-native";
+
 export default function RootLayout() {
 
   const [fontsLoaded] = useFonts({

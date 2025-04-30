@@ -10,6 +10,7 @@ export const styles = StyleSheet.create({
     padding: 20,
     alignItems: 'center',
   },
+  
   header: {
     fontSize: 24,
     fontWeight: 'bold',
@@ -104,5 +105,57 @@ export const styles = StyleSheet.create({
   backText: {
     color: COLORS,
     fontFamily: 'Poppins-Medium',
+  },
+  headerContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    width: '100%',
+    marginBottom: 20,
+  },
+  helpButton: {
+    padding: 5,
+    marginBottom: 30
+  },
+  modalOverlay: {
+    flex: 1,
+    backgroundColor: 'rgba(0,0,0,0.5)',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  modalContent: {
+    backgroundColor: COLORS.surface,
+    borderRadius: 16,
+    padding: 24,
+    width: '80%',
+  },
+  modalTitle: {
+    fontSize: 20,
+    fontWeight: 'bold',
+    color: COLORS.white,
+    marginBottom: 20,
+    textAlign: 'center',
+  },
+  helpItem: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 15,
+  },
+  helpText: {
+    fontSize: 13,
+    color: COLORS.white,
+    marginLeft: 10,
+    padding: 5
+  },
+  modalCloseButton: {
+    marginTop: 20,
+    padding: 12,
+    backgroundColor: COLORS.primary,
+    borderRadius: 8,
+    alignItems: 'center',
+  },
+  modalCloseText: {
+    color: 'black',
+    fontWeight: 'bold',
   },
 });

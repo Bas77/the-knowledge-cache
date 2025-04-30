@@ -147,11 +147,18 @@ const Flashcard = () => {
         renderItem={renderItem}
         keyExtractor={(item: FlashcardSet) => item.id}
         contentContainerStyle={styles.listContainer}
+        ListEmptyComponent={
+          <View style={styles.emptyContainer}>
+            <Ionicons name="alert-sharp" size={48} color={COLORS.textSecondary} />
+            <Text style={styles.emptyText}>No sets in repository!</Text>
+          </View>
+        }
         ListFooterComponent={
           <TouchableOpacity style={styles.createButton} onPress={() => router.push('../(flashcard)/create')}>
             <Text style={styles.createButtonText}>＋</Text>
           </TouchableOpacity>
         }
+
       />
 
       <Modal

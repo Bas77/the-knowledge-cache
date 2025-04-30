@@ -4,108 +4,105 @@ import { StyleSheet, Dimensions } from "react-native";
 const { width, height } = Dimensions.get("window");
 
 export const styles = StyleSheet.create({
-    container: {
-      flex: 1,
-      backgroundColor: '#000',
-      padding: 20,
-    },
-    header: {
-      color: '#FFF',
-      fontSize: 24,
-      fontWeight: 'bold',
-      marginBottom: 20,
-      textAlign: 'center',
-    },
-    headerContainer: {
-      flexDirection: 'row',
-      justifyContent: 'space-between',
-      alignItems: 'center',
-      marginBottom: 16,
-    },
-    searchButton: {
-      padding: 8,
-      color: COLORS.primary,
-      marginBottom: 20,
-      // backgroundColor: COLORS.primary
-    },
-    listContainer: {
-      paddingBottom: 20,
-    //   borderColor: 'red',
-    //   borderWidth: 2
-    },
-    setItem: {
-      backgroundColor: COLORS.surfaceLight,
-      borderWidth: 1,
-      borderColor: '#FFF',
-      borderRadius: 10,
-      padding: 16,
-      marginBottom: 12,
-      flexDirection: 'column',
-
-    },
-    selectedSetItem: {
-      borderColor: COLORS.primary,
-      borderWidth: 2,
-    //   paddingBottom: 0,
-      
-    },
-    setItemButtonContainer: {
-        flexDirection: 'row',
-        justifyContent: 'space-between',
-        alignItems: 'center',
-        marginTop: 10,
-        paddingHorizontal: 10,
-    },
-    setItemButtonEdit: {
-        flexDirection: 'column',
-        backgroundColor: COLORS.secondary,
-        width: '30%',
-        // padding: 20,
-        // height: 20,
-        borderRadius: 25,
-        justifyContent: 'space-between',
-        alignItems: 'center',
-        marginTop: 10,
-        margin: 15,
-        bottom: -20,
-        left: 50
-    },
-    setItemButtonTest: {
-        flexDirection: 'column',
-        backgroundColor: '#028A0F',
-        width: '30%',
-        // padding: 20,
-        // height: 20,
-        borderRadius: 25,
-        justifyContent: 'space-between',
-        alignItems: 'center',
-        marginTop: 10,
-        margin: 15,
-        bottom: -20,
-        left: 50
-    },
-    setItemButtonText: {
-        margin: 10,
-        fontFamily: 'Poppins-SemiBold'
-    },
-    deleteButton: {
-        color: COLORS.error,
-        // position: 'absolute',
-        // bottom: 20,
-        // left: -280,
-        // bottom: -1
-    },
-    setInfo: {
-      flex: 1,
-    },
-    setTitle: {
-      color: '#FFF',
-      fontSize: 18,
-      fontWeight: '600',
-      marginBottom: 4,
-    },
-    setCount: {
-      color: '#AAA',
-      fontSize: 14,
-    },
-  });
+  container: {
+    flex: 1,
+    backgroundColor: COLORS.background,
+    paddingHorizontal: 16,
+  },
+  header: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    paddingVertical: 16,
+    marginBottom: 8,
+  },
+  headerTitle: {
+    fontSize: 20,
+    fontWeight: 'bold',
+    color: COLORS.text,
+    fontFamily: 'Poppins-SemiBold',
+  },
+  loadingContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  loadingText: {
+    color: COLORS.textSecondary,
+    fontSize: 16,
+  },
+  listContainer: {
+    paddingBottom: 24,
+  },
+  card: {
+    backgroundColor: COLORS.surface,
+    borderRadius: 12,
+    padding: 16,
+    marginBottom: 12,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 2,
+  },
+  cardHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginBottom: 8,
+  },
+  cardTitle: {
+    fontSize: 18,
+    fontWeight: '600',
+    color: COLORS.text,
+    fontFamily: 'Poppins-SemiBold',
+    flex: 1,
+  },
+  cardCount: {
+    fontSize: 14,
+    color: COLORS.primary,
+    fontFamily: 'Poppins-Medium',
+    marginLeft: 8,
+  },
+  cardDescription: {
+    fontSize: 14,
+    color: COLORS.textSecondary,
+    marginBottom: 12,
+    fontFamily: 'Poppins-Regular',
+  },
+  cardFooter: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    borderTopWidth: 1,
+    borderTopColor: COLORS.white,
+    paddingTop: 12,
+  },
+  creatorText: {
+    fontSize: 13,
+    color: COLORS.textSecondary,
+    fontFamily: 'Poppins-Regular',
+  },
+  addButton: {
+    backgroundColor: COLORS.primary,
+    paddingVertical: 8,
+    paddingHorizontal: 16,
+    borderRadius: 20,
+  },
+  addButtonText: {
+    color: 'black',
+    fontSize: 14,
+    fontFamily: 'Poppins-Medium',
+  },
+  emptyContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginTop: 80,
+  },
+  emptyText: {
+    marginTop: 16,
+    color: COLORS.textSecondary,
+    fontSize: 16,
+    fontFamily: 'Poppins-Regular',
+  },
+});

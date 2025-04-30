@@ -148,4 +148,16 @@ export const styles = StyleSheet.create({
     color: '#FFF',
     fontWeight: 'bold',
   },
+  emptyContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginTop: 80,
+  },
+  emptyText: {
+    marginTop: 16,
+    color: COLORS.textSecondary,
+    fontSize: 16,
+    fontFamily: 'Poppins-Regular',
+  },
 });
