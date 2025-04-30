@@ -3,6 +3,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { COLORS } from '../../constants/theme';
 import React, { useEffect, useState } from 'react';
 import { supabase } from '@/lib/supabase';
+import { ScrollView } from 'react-native';
   
 const tabScreens = [
   { name: 'index', title: 'Home', icon: 'home' },
@@ -30,7 +31,7 @@ export default function TabLayout() {
 
     checkSession();
   }, []);
-  return (
+  return ( 
     <Tabs
       screenOptions={{
         headerShown: false,

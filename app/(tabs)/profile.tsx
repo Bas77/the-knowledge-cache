@@ -122,7 +122,11 @@ const ProfilePage = () => {
   }, []);
   
   return (
-    <ScrollView style={styles.container}>
+    <ScrollView 
+      style={styles.container} 
+      overScrollMode="always"
+      // showsVerticalScrollIndicator={true}
+    >
       {/* Profile Header */}
       <View style={styles.profileHeader}>
       {profile?.profile_picture ? (
@@ -148,11 +152,13 @@ const ProfilePage = () => {
           <Ionicons name="create-outline" size={24} color={COLORS.primary} />
           <Text style={styles.actionText}>Edit Profile</Text>
         </TouchableOpacity>
-
-        <TouchableOpacity style={styles.actionCard} onPress={() => {/* router.push('/settings') */}}>
+    {/* 
+        <TouchableOpacity style={styles.actionCard} onPress={() => {/* router.push('/settings') }}>
           <Ionicons name="settings-outline" size={24} color={COLORS.primary} />
           <Text style={styles.actionText}>Settings</Text>
-        </TouchableOpacity>
+        </TouchableOpacity> 
+        
+    */}
 
         <TouchableOpacity style={[styles.actionCard, { borderColor: '#FF5C5C' }]} onPress={handleLogout} >
           <Ionicons name="log-out-outline" size={24} color="#FF5C5C" />
@@ -163,6 +169,7 @@ const ProfilePage = () => {
       {/* App Info / Placeholder */}
       <Text style={styles.sectionTitle}>App Info</Text>
       <View style={styles.infoCard}>
+        <Text style={styles.infoText}>The Knowledge Cache</Text>
         <Text style={styles.infoText}>Version 1.0.0</Text>
         <Text style={styles.infoText}>Developed by Group 1</Text>
         <Text style={styles.infoText}>Archi Setio - Scrum Master</Text>
@@ -181,6 +188,7 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#000',
     padding: 20,
+    zIndex: 2
   },
   profileHeader: {
     alignItems: 'center',
