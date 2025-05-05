@@ -1,10 +1,6 @@
 import 'dotenv/config';
 
 export default {
-  
-    
-  
-  
   expo: {
     name: "the-knowledge-cache",
     slug: "the-knowledge-cache",

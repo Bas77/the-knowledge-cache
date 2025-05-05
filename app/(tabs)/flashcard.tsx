@@ -153,12 +153,11 @@ const Flashcard = () => {
             <Text style={styles.emptyText}>No sets in repository!</Text>
           </View>
         }
-        ListFooterComponent={
-          <TouchableOpacity style={styles.createButton} onPress={() => router.push('../(flashcard)/create')}>
-            <Text style={styles.createButtonText}>＋</Text>
-          </TouchableOpacity>
-        }
       />
+
+      <TouchableOpacity style={styles.createButton} onPress={() => router.push('../(flashcard)/createSet')}>
+          <Text style={styles.createButtonText}>＋</Text>
+      </TouchableOpacity>
 
       <Modal
         visible={deleteModalVisible}

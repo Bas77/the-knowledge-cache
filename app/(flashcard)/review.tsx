@@ -160,7 +160,7 @@ const ReviewPage = () => {
           onPress={handlePrev}
           disabled={currentIndex === 0}
         >
-          <Ionicons name="arrow-back" size={28} color={currentIndex === 0 ? 'grey' : 'White'} />
+          <Ionicons name="arrow-back" size={28} color={currentIndex === 0 ? 'grey' : 'black'} />
         </TouchableOpacity>
 
         <TouchableOpacity style={styles.flipButton} onPress={flipCard}>
@@ -173,7 +173,7 @@ const ReviewPage = () => {
           onPress={handleNext}
           disabled={currentIndex === flashcards.length - 1}
         >
-          <Ionicons name="arrow-forward" size={28} color={currentIndex === flashcards.length - 1 ? 'grey' : 'White'} />
+          <Ionicons name="arrow-forward" size={28} color={currentIndex === flashcards.length - 1 ? 'grey' : 'black'} />
         </TouchableOpacity>
       </View>
 

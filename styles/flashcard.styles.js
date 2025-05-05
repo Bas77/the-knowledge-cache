@@ -83,8 +83,8 @@ export const styles = StyleSheet.create({
   },
   createButton: {
     position: 'absolute',
-    bottom: -90,
-    right: 5,
+    bottom: 100,
+    right: 15,
     backgroundColor: COLORS.primary,
     paddingVertical: 16,
     paddingHorizontal: 20,
