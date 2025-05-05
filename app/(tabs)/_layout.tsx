@@ -2,8 +2,8 @@ import { Tabs, useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { COLORS } from '../../constants/theme';
 import React, { useEffect, useState } from 'react';
-import { supabase } from '@/lib/supabase';
-import { ScrollView } from 'react-native';
+import { supabase } from '../../lib/supabase';
+import { Alert, ScrollView } from 'react-native';
   
 const tabScreens = [
   { name: 'index', title: 'Home', icon: 'home' },
@@ -21,7 +21,7 @@ export default function TabLayout() {
       const { data: { session }, error } = await supabase.auth.getSession();
       console.log(session);
       if (error || !session) {
-        // If no session, navigate to login page
+        // Alert.alert('Session not found, please login');
         router.replace('/(auth)/login');  // Adjust the route as per your folder structure
       } else {
         // If session exists, proceed with the rest of the app

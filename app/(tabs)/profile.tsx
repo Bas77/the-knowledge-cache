@@ -17,7 +17,6 @@ const ProfilePage = () => {
     profile_picture: string | null;
     created_at: string;
     formatted_date?: string;
-
   };
 
   const formatDate = (dateString: string) => {

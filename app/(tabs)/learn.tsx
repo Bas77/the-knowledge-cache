@@ -16,7 +16,6 @@ import { supabase } from '@/lib/supabase';
 const LearnHome = () => {
   const router = useRouter();
   const [subjects, setSubjects] = useState<any[]>([]);
-    
       useEffect(() => {
         const fetchTopics = async () => {
           const { data, error } = await supabase
@@ -31,6 +30,7 @@ const LearnHome = () => {
     
         fetchTopics();
       },[]);
+      
   return (
     <View style={styles.container}>
       <Text style={styles.header2}>Learn by Subject</Text>

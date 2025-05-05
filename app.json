@@ -1,7 +1,7 @@
 {
   "expo": {
-    "name": "TKC-app",
-    "slug": "TKC-app",
+    "name": "the-knowledge-cache",
+    "slug": "the-knowledge-cache",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",

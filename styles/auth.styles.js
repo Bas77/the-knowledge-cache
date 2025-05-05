@@ -84,7 +84,7 @@ export const styles = StyleSheet.create({
   },
   googleButton: {
     flexDirection: 'row',
-    backgroundColor: '#fff',
+    backgroundColor: COLORS.surface,
     width: '100%',
     height: 50,
     borderRadius: 25,

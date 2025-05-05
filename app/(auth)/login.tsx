@@ -5,7 +5,7 @@ import {styles} from '../../styles/auth.styles.js'
 import {COLORS} from '@/constants/theme'
 import { Ionicons } from '@expo/vector-icons'
 import { useRouter } from 'expo-router';
-import { supabase } from '@/lib/supabase';
+import { supabase } from '../../lib/supabase';
 import { useAuth } from '@/contexts/AuthContext';
 import { User } from '@supabase/supabase-js';
 
@@ -39,7 +39,6 @@ export default function login(){
             email: email,  // Use the email as the username
             password: password,
           });
-          await new Promise((resolve) => setTimeout(resolve, 500));
           if (error) throw error;
           setGlobalUser(data.user);
           if(data.user){
@@ -96,7 +95,7 @@ export default function login(){
                 {isLoading ? (<ActivityIndicator size='large' color="#000"/>) : <Text style={styles.buttonText}>Login</Text>}
             </TouchableOpacity>
 
-            <TouchableOpacity style={styles.googleButton} onPress={test}>
+            <TouchableOpacity style={styles.googleButton} disabled={true}>
             <Ionicons name="logo-google" size={24} color={COLORS.surfaceLight} />
             <Text style={styles.googleButtonText} disabled={true}>Continue with Google</Text>
             </TouchableOpacity>

@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Modal, View, Text, TouchableOpacity, FlatList, Alert } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import {styles} from '@/styles/flashcard.styles'
-import { supabase } from '@/lib/supabase';
+import { supabase } from '../../lib/supabase';
 import { useAuth } from '@/contexts/AuthContext';
 import { COLORS } from '@/constants/theme';
 import { router } from 'expo-router';
@@ -158,7 +158,6 @@ const Flashcard = () => {
             <Text style={styles.createButtonText}>＋</Text>
           </TouchableOpacity>
         }
-
       />
 
       <Modal
