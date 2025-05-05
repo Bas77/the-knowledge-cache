@@ -111,7 +111,8 @@ export const styles = StyleSheet.create({
     backgroundColor: '#111',
     borderRadius: 12,
     padding: 24,
-    width: '80%',
+    width: width * 0.9, // Use 90% of screen width
+    maxWidth: 400
   },
   modalTitle: {
     color: '#FFF',
@@ -159,5 +160,34 @@ export const styles = StyleSheet.create({
     color: COLORS.textSecondary,
     fontSize: 16,
     fontFamily: 'Poppins-Regular',
+  },
+  ownerBadge: {
+    fontSize: 12,
+    color: COLORS.primary,
+    marginTop: 4,
+  },
+  modalButtons: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    width: '100%',
+    marginTop: 16,
+  },
+  modalButton: {
+    padding: 12,
+    borderRadius: 8,
+    alignItems: 'center',
+    minWidth: '30%', // Ensures buttons have minimum width
+  },
+  cancelButton: {
+    backgroundColor: COLORS.surfaceLight,
+    // marginRight: 8, // Add some spacing between buttons
+  },
+  deleteForMeButton: {
+    backgroundColor: COLORS.error,
+    marginHorizontal: 8, // Add spacing on both sides
+  },
+  deleteForAllButton: {
+    backgroundColor: COLORS.error,
+    // marginLeft: 8, // Add spacing on left
   },
 });

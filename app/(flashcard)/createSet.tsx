@@ -4,32 +4,52 @@ import { Ionicons } from '@expo/vector-icons';
 import { COLORS } from '@/constants/theme';
 import { supabase } from '@/lib/supabase';
 import { router } from 'expo-router';
+import { useAuth } from '@/contexts/AuthContext';
 
 export default function CreateSetScreen() {
   const [setsName, setName] = useState('');
   const [description, setDescription] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isPublic, setIsPublic] = useState(false);
+  const {user, setGlobalUser} = useAuth();
+
+  const insertRepo = async (setId: string) => {
+    const { data, error } = await supabase
+        .from('user_repository')
+        .insert([{ 
+          user_id: user?.id, 
+          set_id: setId
+        }])
+        .select()
+        .single();
+      if(error) throw error;
+  }
   const handleCreateSet = async () => {
     if (!setsName.trim()) return;
 
     setIsSubmitting(true);
-    // try {
-    //   const { data, error } = await supabase
-    //     .from('sets')
-    //     .insert([{ 
-    //       title: setsName, 
-    //       description,
-    //       is_public: false 
-    //     }])
-    //     .select()
-    //     .single();
+    try {
+      const { data, error } = await supabase
+        .from('sets')
+        .insert([{ 
+          title: setsName, 
+          owner_id: user?.id,
+          description: description,
+          is_public: isPublic 
+        }])
+        .select()
+        .single();
 
-    //   if (error) throw error;
-      router.push(`./createCard`);
-    // } finally {
-    //   setIsSubmitting(false);
-    // }
+      if (error) throw error;
+      insertRepo(data.id);
+
+      router.push({
+        pathname:`/(flashcard)/createCard`, 
+        params: {setId: data.id}
+      });
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (

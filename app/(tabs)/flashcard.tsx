@@ -75,41 +75,68 @@ const Flashcard = () => {
       setSets([]);
     }
   };
-  // const [flashcardSets, setFlashcardSets] = useState<FlashcardSet[]>([
-  //   { id: '1', title: 'Software Engineering', count: 42 },
-  //   { id: '2', title: 'Big Data Processing', count: 36 },
-  //   { id: '3', title: 'Database Design', count: 28 },
-  //   { id: '4', title: 'Research Methodology', count: 15 },
-  //   { id: '5', title: 'Data Analytics', count: 31 },
-  // ]);
+
 
   const [selectedSet, setSelectedSet] = useState<string | null>(null);
   const [deleteModalVisible, setDeleteModalVisible] = useState(false);
   const [setToDelete, setSetToDelete] = useState<string | null>(null);
-  const confirmDelete = (setId: string) => {
+  const [ownerDeleteModalVisible, setOwnerDeleteModalVisible] = useState(false);
+
+  const confirmDelete = async (setId: string) => {
     setSetToDelete(setId);
-    setDeleteModalVisible(true);
+    // setDeleteModalVisible(true);
+    console.log('setId: ', setId);
+    const {data, error} = await supabase
+      .from('sets')
+      .select('owner_id')
+      .eq('id', setId)
+      .single()
+
+    console.log('data: ', data);
+    if(error) throw(error);
+    if (data?.owner_id === user?.id) {
+      setOwnerDeleteModalVisible(true); // Show owner-specific modal
+    } else {
+      setDeleteModalVisible(true); // Show regular delete modal
+    }
   };
 
-  const handleDelete = async () => {
-    console.log(setToDelete);
-    const previousData = [sets];
-        const { data, error } = await supabase
-            .from('user_repository')
-            .delete()
-            .eq('set_id', setToDelete)
-    
-            if (error) {
-              setSets(previousData);
-              console.error('Failed to delete:', error);
-            } else {
-              setSets(sets.filter(item => item.id !== setToDelete))
-              console.log('Deleted:', data);
-            }
-    setDeleteModalVisible(false);
+  const handleDelete = async (deleteForEveryone: boolean = false) => {
+    console.log(setToDelete)
+    if (!setToDelete) return;
+
+    // console.log(setToDelete);
+    try {
+      // First remove from user_repository
+      const { error: repoError } = await supabase
+        .from('user_repository')
+        .delete()
+        .eq('set_id', setToDelete)
+        .eq('user_id', user?.id);
+
+      if (repoError) throw repoError;
+
+      // If owner and chose to delete for everyone
+      if (deleteForEveryone) {
+        // Delete the set itself
+        await supabase
+          .from('sets')
+          .delete()
+          .eq('id', setToDelete);
+      }
+
+      // Update local state
+      setSets(sets.filter(item => item.id !== setToDelete));
+    } catch (error) {
+      console.error('Failed to delete:', error);
+      Alert.alert('Error', 'Failed to delete the set');
+    } finally {
+      setDeleteModalVisible(false);
+      setOwnerDeleteModalVisible(false);
+      setSetToDelete(null);
+    }
   };
   
-  // Properly type the renderItem function
   const renderItem = ({ item }: { item: FlashcardSet }) => (
     <TouchableOpacity
       style={[
@@ -169,7 +196,7 @@ const Flashcard = () => {
           <View style={styles.modalContent}>
             <Text style={styles.modalTitle}>Delete Set</Text>
             <Text style={styles.modalMessage}>
-              Are you sure you want to delete this flashcard set? This action cannot be undone.
+              Are you sure you want to delete this flashcard set from your repository?
             </Text>
             
             <View style={styles.modalButtons}>
@@ -182,9 +209,45 @@ const Flashcard = () => {
               
               <TouchableOpacity 
                 style={[styles.modalButton, styles.deleteConfirmButton]}
-                onPress={handleDelete}
+                onPress={() => handleDelete}
               >
                 <Text style={styles.deleteConfirmText}>Delete</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        </View>
+      </Modal>
+
+      <Modal
+        visible={ownerDeleteModalVisible}
+        transparent={true}
+        animationType="fade"
+        onRequestClose={() => setOwnerDeleteModalVisible(false)}
+      >
+        <View style={styles.modalOverlay}>
+          <View style={styles.modalContent}>
+            <Text style={styles.modalTitle}>Delete Set</Text>
+            <Text style={styles.modalMessage}>
+              You're the owner of this set. Delete it just for yourself or for all users?
+            </Text>
+            <View style={styles.modalButtons}>
+              <TouchableOpacity 
+                style={[styles.modalButton, styles.cancelButton]}
+                onPress={() => setOwnerDeleteModalVisible(false)}
+              >
+                <Text style={styles.cancelText}>Cancel</Text>
+              </TouchableOpacity>
+              <TouchableOpacity 
+                style={[styles.modalButton, styles.deleteForMeButton]}
+                onPress={() => handleDelete(false)}
+              >
+                <Text style={styles.deleteConfirmText}>Just For Me</Text>
+              </TouchableOpacity>
+              <TouchableOpacity 
+                style={[styles.modalButton, styles.deleteForAllButton]}
+                onPress={() => handleDelete(true)}
+              >
+                <Text style={styles.deleteConfirmText}>For Everyone</Text>
               </TouchableOpacity>
             </View>
           </View>

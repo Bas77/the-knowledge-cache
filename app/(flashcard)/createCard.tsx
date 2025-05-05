@@ -4,27 +4,29 @@ import { Ionicons } from '@expo/vector-icons';
 import { COLORS } from '@/constants/theme';
 import { supabase } from '@/lib/supabase';
 import { useLocalSearchParams, router } from 'expo-router';
+import { useAuth } from '@/contexts/AuthContext';
 
 export default function CreateCardScreen() {
-  const { id: setId } = useLocalSearchParams();
+  const { setId } = useLocalSearchParams();
   const [card, setCard] = useState({
     question: '',
     answer: '',
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
-
+  const {user, setGlobalUser} = useAuth();
   const handleCreateCard = async () => {
     if (!card.question.trim() || !card.answer.trim()) return;
-
+    console.log('setId : ', setId);
     setIsSubmitting(true);
     try {
-      // await supabase
-      //   .from('flashcards')
-      //   .insert([{ 
-      //     question: card.question,
-      //     answer: card.answer,
-      //     set_id: setId 
-      //   }]);
+      await supabase
+        .from('flashcards')
+        .insert([{ 
+          author_id: user?.id,
+          front: card.question,
+          back: card.answer,
+          set_id: setId 
+        }]);
 
       // Clear inputs for next card
       setCard({ question: '', answer: '' });
@@ -40,7 +42,7 @@ export default function CreateCardScreen() {
           <Ionicons name="arrow-back" size={24} color={COLORS.text} />
         </TouchableOpacity>
         <Text style={styles.headerTitle}>Add Cards</Text>
-        <TouchableOpacity onPress={() => router.push(`/sets/${setId}`)}>
+        <TouchableOpacity onPress={() => router.back()}>
           <Text style={styles.headerAction}>Done</Text>
         </TouchableOpacity>
       </View>

@@ -88,7 +88,7 @@ export default function SignUp({ navigation }: { navigation: any }) {
     const result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ['images'],
       quality: 1,
-      aspect:[4,3],
+      aspect:[3,3],
       allowsEditing: true,
       base64: true,
     });
