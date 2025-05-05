@@ -1,25 +1,59 @@
-import React, { useState, useRef } from 'react';
-import { View, Text, TouchableOpacity, Animated, Dimensions, Pressable, Modal } from 'react-native';
+import React, { useState, useRef, useEffect } from 'react';
+import { View, Text, TouchableOpacity, Animated, Dimensions, Pressable, Modal, ActivityIndicator } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { COLORS } from '@/constants/theme';
-import { router } from 'expo-router';
+import { router, useLocalSearchParams } from 'expo-router';
 import { styles } from '@/styles/(flashcard)/review.styles';
+import { supabase } from '@/lib/supabase';
 // import {changeNavigationBarColor} from 'react-native-navigation-bar-color';
 const { width } = Dimensions.get('window');
 
-const flashcards = [
-  { question: 'What is normalization in DB?', answer: 'It\'s the process of organizing data to reduce redundancy.' },
-  { question: 'Define ACID in DB.', answer: 'Atomicity, Consistency, Isolation, Durability.' },
-  { question: 'What is a foreign key?', answer: 'A key used to link two tables together.' },
-];
+// const flashcards = [
+//   { question: 'What is normalization in DB?', answer: 'It\'s the process of organizing data to reduce redundancy.' },
+//   { question: 'Define ACID in DB.', answer: 'Atomicity, Consistency, Isolation, Durability.' },
+//   { question: 'What is a foreign key?', answer: 'A key used to link two tables together.' },
+// ];
+
+type Flashcard = {
+  id: string;
+  author_id: string;
+  front: string;
+  back: string;
+  set_id: string;
+};
 
 const ReviewPage = () => {
+  const {setId} = useLocalSearchParams();
   const [currentIndex, setCurrentIndex] = useState(0);
   const [flipped, setFlipped] = useState(false);
   const [showHelpModal, setShowHelpModal] = useState(false);
+  const [flashcards, setFlashcards] = useState<Flashcard[]>([]);
+  const [isLoading, setIsLoading] = useState(false);
   const flipAnimation = useRef(new Animated.Value(0)).current;
   const slideAnimation = useRef(new Animated.Value(0)).current;
-
+  useEffect(() => {
+        const fetchCards = async () => {
+          try{
+          setIsLoading(true);
+          const { data, error } = await supabase
+            .from('flashcards')
+            .select('*')
+            .eq('set_id', setId as string);
+          console.log('flashcards gottem: ' , data);
+          if (error) {
+            console.error(error);
+            throw(error);
+          }
+          if(data)
+          setFlashcards(data);
+          // console.log(data);
+        } catch(error) {throw(error)}
+        finally{
+          setIsLoading(false);
+        }
+        };
+        fetchCards();
+      }, [setId]);
   // Flip animation
   const flipCard = () => {
     Animated.spring(flipAnimation, {
@@ -117,8 +151,27 @@ const ReviewPage = () => {
       outputRange: [0, 0, 1]
     })
   };
-
-
+  if (isLoading) {
+    return (
+      <View style={[styles.container, styles.loadingContainer]}>
+        <ActivityIndicator size="large" color={COLORS.primary} />
+      </View>
+    );
+  }
+  
+  if (flashcards.length === 0) {
+    return (
+      <View style={[styles.container, styles.emptyContainer]}>
+        <Text style={styles.emptyText}>No flashcards found in this set</Text>
+        <TouchableOpacity 
+          style={styles.backButton} 
+          onPress={() => router.replace('(tabs)/flashcard')}
+        >
+          <Text style={styles.backText}>Back to Sets</Text>
+        </TouchableOpacity>
+      </View>
+    );
+  }
   return (
     <Pressable style={styles.container} onLongPress={handlePress} onPress={handleSinglePress}>
       <View style={styles.headerContainer}>
@@ -139,13 +192,13 @@ const ReviewPage = () => {
       >
         <Animated.View style={[styles.card, styles.cardFront, frontAnimatedStyle]}>
           <Text style={styles.cardTitle}>Question</Text>
-          <Text style={styles.cardText}>{currentCard.question}</Text>
+          <Text style={styles.cardText}>{currentCard.front}</Text>
           <Text style={styles.tapHint}>Tap to flip</Text>
         </Animated.View>
 
         <Animated.View style={[styles.card, styles.cardBack, backAnimatedStyle]}>
           <Text style={styles.cardTitle}>Answer</Text>
-          <Text style={styles.cardText}>{currentCard.answer}</Text>
+          <Text style={styles.cardText}>{currentCard.back}</Text>
           <Text style={styles.tapHint}>Tap to flip</Text>
         </Animated.View>
       </TouchableOpacity>

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Modal, View, Text, TouchableOpacity, FlatList, Alert } from 'react-native';
+import { Modal, View, Text, TouchableOpacity, FlatList, Alert, ActivityIndicator } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import {styles} from '@/styles/(flashcard)/search.styles'
 import { supabase } from '@/lib/supabase';
@@ -13,6 +13,7 @@ const Flashcard = () => {
   const [sets, setSets] = useState<any[]>([]);
   const {user, setGlobalUser} = useAuth();
   const isFocused = useIsFocused();
+  const [isLoading, setIsLoading] = useState(false);
   
     useEffect(() => {
       if (isFocused) {
@@ -22,6 +23,7 @@ const Flashcard = () => {
     }, [isFocused]);
   const fetchSets = async () => {
     try {
+      setIsLoading(true);
       // 1. First get all set_ids for this user
       const { data: userRepos, error: repoError } = await supabase
         .from('user_repository')
@@ -63,6 +65,8 @@ const Flashcard = () => {
     } catch (err) {
       console.error('Error fetching sets:', err);
       setSets([]);
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -87,9 +91,17 @@ const Flashcard = () => {
     }));
     
     setSets(setsWithCounts); 
+    setIsLoading(false);
   }
  
-
+  if (isLoading) {
+      return (
+        <View style={[styles.container, styles.loadingContainer]}>
+          <ActivityIndicator size="large" color={COLORS.primary} />
+        </View>
+      );
+    }
+    
   const addFlashcard = async (setId: string) => {
     console.log(setId);
     const { data, error } = await supabase

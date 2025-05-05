@@ -190,4 +190,8 @@ export const styles = StyleSheet.create({
     backgroundColor: COLORS.error,
     // marginLeft: 8, // Add spacing on left
   },
+  loadingContainer: {
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
 });

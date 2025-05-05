@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Modal, View, Text, TouchableOpacity, FlatList, Alert } from 'react-native';
+import { Modal, View, Text, TouchableOpacity, FlatList, Alert, ActivityIndicator } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import {styles} from '@/styles/flashcard.styles'
 import { supabase } from '../../lib/supabase';
@@ -26,7 +26,7 @@ const Flashcard = () => {
   const [sets, setSets] = useState<any[]>([]);
   const {user, setGlobalUser} = useAuth();
   const isFocused = useIsFocused();
-
+  const [isLoading, setIsLoading] = useState(false);
   useEffect(() => {
     if (isFocused) {
       // console.log('is focused');
@@ -37,6 +37,7 @@ const Flashcard = () => {
   const fetchSets = async () => {
     try {
       // 1. First get all set_ids for this user
+      setIsLoading(true);
       const { data: userRepos, error: repoError } = await supabase
         .from('user_repository')
         .select('set_id')
@@ -73,6 +74,8 @@ const Flashcard = () => {
     } catch (err) {
       console.error('Error fetching sets:', err);
       setSets([]);
+    } finally{
+      setIsLoading(false);
     }
   };
 
@@ -153,11 +156,21 @@ const Flashcard = () => {
       (<View style={styles.setItemButtonContainer}>
         <TouchableOpacity><Ionicons name="trash" style={styles.deleteButton} size={32} onPress={() => confirmDelete(item.id)} /></TouchableOpacity>
         <TouchableOpacity style={styles.setItemButtonEdit}><Text style={styles.setItemButtonText}>Edit</Text></TouchableOpacity>
-        <TouchableOpacity style={styles.setItemButtonTest} onPress={() => router.push('../(flashcard)/review')}><Text style={styles.setItemButtonText} >Review</Text></TouchableOpacity>
+        <TouchableOpacity style={styles.setItemButtonTest} onPress={() => router.push({
+          pathname: '../(flashcard)/review',
+          params: {setId: selectedSet}
+        })}>
+        <Text style={styles.setItemButtonText} >Review</Text></TouchableOpacity>
       </View>)}
     </TouchableOpacity>
   );
-
+  if (isLoading) {
+    return (
+      <View style={[styles.container, styles.loadingContainer]}>
+        <ActivityIndicator size="large" color={COLORS.primary} />
+      </View>
+    );
+}
   return (
     <View style={styles.container}>
       <View style={styles.headerContainer}>

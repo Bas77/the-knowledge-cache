@@ -158,4 +158,17 @@ export const styles = StyleSheet.create({
     color: 'black',
     fontWeight: 'bold',
   },
+  emptyContainer: {
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  emptyText: {
+    fontSize: 18,
+    color: COLORS.textSecondary,
+    marginBottom: 20,
+  },
+  loadingContainer: {
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
 });
