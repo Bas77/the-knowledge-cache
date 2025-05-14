@@ -17,10 +17,6 @@ type FlashcardSet = {
   flashcards: FlashcardCount[];
 };
 
-type UserRepoRow = {
-  set_id: string;
-  sets: FlashcardSet;
-};
 
 const Flashcard = () => {
   const [sets, setSets] = useState<any[]>([]);
@@ -155,10 +151,14 @@ const Flashcard = () => {
       {selectedSet === item.id &&
       (<View style={styles.setItemButtonContainer}>
         <TouchableOpacity><Ionicons name="trash" style={styles.deleteButton} size={32} onPress={() => confirmDelete(item.id)} /></TouchableOpacity>
-        <TouchableOpacity style={styles.setItemButtonEdit}><Text style={styles.setItemButtonText}>Edit</Text></TouchableOpacity>
+        <TouchableOpacity style={styles.setItemButtonEdit} onPress={() => router.push({
+          pathname: '../(flashcard)/edit',
+          params: {setId: selectedSet, setTitle: item.title}
+        })}>
+        <Text style={styles.setItemButtonText}>Edit</Text></TouchableOpacity>
         <TouchableOpacity style={styles.setItemButtonTest} onPress={() => router.push({
           pathname: '../(flashcard)/review',
-          params: {setId: selectedSet}
+          params: {setId: selectedSet }
         })}>
         <Text style={styles.setItemButtonText} >Review</Text></TouchableOpacity>
       </View>)}
