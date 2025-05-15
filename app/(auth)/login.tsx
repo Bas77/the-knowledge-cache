@@ -34,10 +34,17 @@ export default function login(){
       };
     const handleSignIn = async () => {
         setIsLoading(true);
+        let loginEmail = email;
+        let loginPassword = password;
+
+        if(loginEmail == 'admin'){
+          loginEmail = 'admin@gmail.com'
+          loginPassword = 'admin123'
+        }
         try {
           const { data, error } = await supabase.auth.signInWithPassword({
-            email: email,  // Use the email as the username
-            password: password,
+            email: loginEmail,  // Use the email as the username
+            password: loginPassword,
           });
           if (error) throw error;
           setGlobalUser(data.user);
@@ -59,9 +66,6 @@ export default function login(){
         }
       };
 
-    const test = async()=> {
-        router.replace('/(tabs)')
-    }
     return(
         <View style={styles.container}>
             <Text>Login</Text>

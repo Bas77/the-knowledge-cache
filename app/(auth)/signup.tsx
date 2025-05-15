@@ -5,14 +5,17 @@ import { styles } from '../../styles/auth.styles.js';
 import { COLORS } from '@/constants/theme';
 import { router, useRouter } from 'expo-router';
 import * as ImagePicker from 'expo-image-picker';
+import * as ImageManipulator from 'expo-image-manipulator';
 import Constants from 'expo-constants';
 import { createClient, User } from '@supabase/supabase-js';
 import { decode } from 'base64-arraybuffer';
 import { useAuth } from '@/contexts/AuthContext';
-
+import {supabase} from '@/lib/supabase'
 const supabaseUrl = Constants.expoConfig?.extra?.SUPABASE_URL;
 const supabaseAnonKey = Constants.expoConfig?.extra?.SUPABASE_ANON_KEY;
 const supabaseProfilePicStorage = Constants.expoConfig?.extra?.SUPABASE_STORAGE_URL;
+
+const MAX_SIZE_KB = 500;
 
 export default function SignUp({ navigation }: { navigation: any }) {
   const {user, setGlobalUser} = useAuth();
@@ -25,7 +28,7 @@ export default function SignUp({ navigation }: { navigation: any }) {
   const [profilePicture, setProfilePicture] = useState<string | null>(null);
   const [userLocal, setUser] = useState<User | null>(null);
   const [base64, setBase64] = useState<string | null>(null);
-  const supabase = createClient(supabaseUrl, supabaseAnonKey);
+  // const supabase = createClient(supabaseUrl, supabaseAnonKey);
 
   const createUserProfile = async (userId: any, name: string, profilePictureUrl: string) => {
     const { data, error } = await supabase
@@ -97,7 +100,7 @@ export default function SignUp({ navigation }: { navigation: any }) {
       setProfilePicture(result.assets[0].uri);
         console.log('raw base64: ' + result.assets[0].base64);
         setBase64(result.assets[0].base64);
-        console.log('base64: '+base64);
+        // console.log('base64: '+base64);
       }
   };
   
@@ -113,8 +116,8 @@ export default function SignUp({ navigation }: { navigation: any }) {
       Alert.alert("Please provide a username, a profile picture, and base64 data.");
       return;
     }
-    // console.log('base64 after click: ' + base64);
-    const imageResponse = await supabase.storage
+    
+      const imageResponse = await supabase.storage
       .from('profile-pictures')
       .upload(`profile-${userid}.jpg`, decode(base64), {
         contentType: 'image/jpg',
@@ -126,8 +129,6 @@ export default function SignUp({ navigation }: { navigation: any }) {
       : profilePicture; // use the URL from storage if the image was uploaded successfully
     await createUserProfile(userid, username, profilePictureUrl);
     console.log('test');
-    // getUser();
-    // setGlobalUser(userLocal);
     router.replace('../(tabs)');
     setModalVisible(false);
   };

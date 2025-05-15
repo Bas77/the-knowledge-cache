@@ -1,17 +1,28 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, TouchableOpacity, StyleSheet, Image, ScrollView, Alert } from 'react-native';
+import { View, Text, TouchableOpacity, StyleSheet, Image, ScrollView, Alert, Modal, TextInput } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { COLORS } from '../../constants/theme';
 import { useRouter } from 'expo-router';
 import { useAuth } from '@/contexts/AuthContext';
 import { supabase } from '@/lib/supabase';
-
+// import { styles } from '@/styles/auth.styles' 
+import { decode } from 'base64-arraybuffer';
+import * as ImagePicker from 'expo-image-picker';
+import { createClient } from '@supabase/supabase-js';
+import Constants from 'expo-constants';
 const ProfilePage = () => {
+
+  const supabaseUrl = Constants.expoConfig?.extra?.SUPABASE_URL;
+  const supabaseAnonKey = Constants.expoConfig?.extra?.SUPABASE_ANON_KEY;
+
   const router = useRouter();
   const { user, setGlobalUser } = useAuth();
+  const [isModalVisible, setModalVisible] = useState(false);
   const [profile, setProfile] = useState<Profile | null>(null)
-
-  
+  const [username, setUsername] = useState('');
+  const [profilePicture, setProfilePicture] = useState<string | null>(null);
+  const [base64, setBase64] = useState<string | null>(null);
+  // const supabase2 = createClient(supabaseUrl, supabaseAnonKey);
   type Profile = {
     name: string;
     profile_picture: string | null;
@@ -19,6 +30,11 @@ const ProfilePage = () => {
     formatted_date?: string;
   };
 
+  useEffect(() => {
+
+    getProfile();
+    console.log(profile?.profile_picture);
+  }, []);
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);
     return date.toLocaleString('default', { 
@@ -55,7 +71,7 @@ const ProfilePage = () => {
       }
   
       setProfile(profileData);
-  
+      
     } catch (error) {
       console.error('Error fetching profile:', error);
       Alert.alert('Error', 'Failed to load profile');
@@ -90,6 +106,8 @@ const ProfilePage = () => {
     }
   };
 
+  
+
   const handleLogout = async () => {
     try {
       // 1. Sign out from Supabase
@@ -113,12 +131,62 @@ const ProfilePage = () => {
       }
     }
   }
-  useEffect(() => {
-
-    getProfile();
-    console.log(profile?.profile_picture);
-  }, []);
   
+
+  const pickImage = async () => {
+      if(profile) setUsername(profile?.name);
+      const result = await ImagePicker.launchImageLibraryAsync({
+        mediaTypes: ['images'],
+        quality: 1,
+        aspect:[3,3],
+        allowsEditing: true,
+        base64: true,
+      });
+  
+      if (!result.canceled && result.assets[0].base64) {
+        setProfilePicture(result.assets[0].uri);
+          // console.log('raw base64: ' + result.assets[0].base64);
+          setBase64(result.assets[0].base64);
+          console.log('base64: '+base64);
+        }
+        
+    };
+
+  const handleProfileEdit =  async ()=> {
+    const userid = user?.id
+        // Upload the image to Supabase Storage if you want to store the image URL
+        if (!username || !profilePicture || !base64) {
+          Alert.alert("Please provide a username, a profile picture, and base64 data.");
+          return;
+        }
+
+        console.log('base64: ' + base64);
+        const imageResponse = await supabase.storage
+          .from('profile-pictures')
+          .upload(`profile-${userid}.jpg`, decode(base64), {
+            contentType: 'image/jpg',
+            upsert: true
+          });
+          console.log('decoded base64: ' + decode(base64))
+        const profilePictureUrl = `profile-${userid}.jpg`
+      try{
+        const { data: data2 , error: error2 } = await supabase
+              .storage
+              .from('profile_pictures')
+              .remove([`profile-${userid}.jpg`])
+        const {data, error} = await supabase
+        .from('users')
+        .upsert({id: userid, profile_picture: profilePictureUrl, name: username})
+        console.log('test');
+      } catch(error){
+        console.log(error);
+        throw(error);
+      }
+        // router.replace('../(tabs)');
+        getProfile();
+        setModalVisible(false);
+  }
+
   return (
     <ScrollView 
       style={styles.container} 
@@ -146,7 +214,7 @@ const ProfilePage = () => {
 
       {/* Profile Actions */}
       <View style={styles.actionsContainer}>
-        <TouchableOpacity style={styles.actionCard} onPress={() => {/* e.g. router.push('/edit-profile') */}}>
+        <TouchableOpacity style={styles.actionCard} onPress={() => {setModalVisible(true)}}>
           <Ionicons name="create-outline" size={24} color={COLORS.primary} />
           <Text style={styles.actionText}>Edit Profile</Text>
         </TouchableOpacity>
@@ -175,7 +243,37 @@ const ProfilePage = () => {
         <Text style={styles.infoText}>I Made Ananda Ryan Viryavan - Product Owner</Text>
         <Text style={styles.infoText}>Vincent Virgo - Design Team</Text>
         <Text style={styles.infoText}>Vincent Tanaka - Design Team</Text>
-
+        
+        <Modal
+              visible={isModalVisible}
+              animationType="slide"
+              onRequestClose={() => setModalVisible(false)}
+            >
+              <View style={styles.modalContainer}>
+                <Text style={styles.modalTitle}>Complete Your Profile</Text>
+      
+                <Text style={styles.loginLabel}>Username</Text>
+                <TextInput
+                  style={styles.input}
+                  placeholder={profile?.name}
+                  value={username}
+                  onChangeText={setUsername}
+                />
+      
+                <Text style={styles.loginLabel}>Profile Picture</Text>
+                <TouchableOpacity onPress={pickImage} style={styles.pickImageButton}>
+                  {profilePicture ? (
+                    <Image source={{ uri: profilePicture }} style={styles.EditprofileImage} />
+                  ) : (
+                    <Text style={styles.pickImageText}>Pick an image</Text>
+                  )}
+                </TouchableOpacity>
+      
+                <TouchableOpacity style={styles.button} onPress={handleProfileEdit}>
+                  <Text style={styles.buttonText}>Save Profile</Text>
+                </TouchableOpacity>
+              </View>
+            </Modal>
       </View>
     </ScrollView>
   );
@@ -247,6 +345,70 @@ const styles = StyleSheet.create({
     fontSize: 14,
     marginBottom: 4,
   },
+  modalContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: 'black',
+    padding: 20,
+  },
+  modalTitle: {
+    fontSize: 20,
+    fontWeight: 'bold',
+    marginBottom: 20,
+  },
+  input: {
+    width: '100%',
+    height: 40,
+    borderColor: '#ddd',
+    borderWidth: 1,
+    borderRadius: 15,
+    marginBottom: 15,
+    paddingHorizontal: 20,
+    fontSize: 16,
+    backgroundColor: '#fff',
+  },
+  loginLabel: {
+      color: COLORS.primary,
+      fontSize: 20,
+      paddingBottom: 10
+    },
+    profileImage: {
+    width: 100,
+    height: 100,
+    borderRadius: 50,
+    marginBottom: 10,
+  },
+  button: {
+      backgroundColor: COLORS.secondary,
+      width: '100%',
+      height: 50,
+      borderRadius: 25,
+      justifyContent: 'center',
+      alignItems: 'center',
+      marginBottom: 20,
+      marginTop: 130
+    },
+    buttonText: {
+      color: COLORS.surfaceLight,
+      fontSize: 18,
+      fontWeight: '600',
+    },
+    pickImageButton: {
+        backgroundColor: COLORS.secondary,
+        padding: 10,
+        borderRadius: 10,
+        marginBottom: 20,
+      },
+      EditprofileImage: {
+        width: 100,
+        height: 100,
+        borderRadius: 50,
+        marginBottom: 10,
+      },
+      pickImageText: {
+        color: 'white',
+      },
 });
 
 export default ProfilePage;

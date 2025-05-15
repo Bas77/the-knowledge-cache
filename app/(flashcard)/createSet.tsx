@@ -43,8 +43,8 @@ export default function CreateSetScreen() {
       if (error) throw error;
       insertRepo(data.id);
 
-      router.push({
-        pathname:`/(flashcard)/createCard`, 
+      router.replace({
+        pathname:`/(flashcard)/edit`, 
         params: {setId: data.id}
       });
     } finally {

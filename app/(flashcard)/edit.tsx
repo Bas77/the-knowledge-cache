@@ -14,12 +14,13 @@ import { COLORS } from "@/constants/theme"
 import { router } from "expo-router"
 import { useAuth } from "@/contexts/AuthContext"
 import { supabase } from "@/lib/supabase"
+import uuid from 'react-native-uuid';
 
 interface Flashcard {
   id: string
   front: string
   back: string
-//   set_id: string
+  set_id: string
   author_id: string | undefined
 }
 
@@ -50,7 +51,8 @@ export default function EditFlashcardSet() {
                 front,
                 back,
                 id,
-                author_id
+                author_id,
+                set_id
             `)
             .eq('set_id', setId)
             console.log('data:',data)
@@ -68,10 +70,11 @@ export default function EditFlashcardSet() {
 
   const addNewCard = () => {
     const newCard: Flashcard = {
-      id: crypto.randomUUID(),
+      id: uuid.v4(),
       author_id: user?.id,
       front: "",
       back: "",
+      set_id:setId
     }
     console.log(setId, setTitle);
     setFlashcards((prev) => (prev ? [...prev, newCard] : [newCard]))

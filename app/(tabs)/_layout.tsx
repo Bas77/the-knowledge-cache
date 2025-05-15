@@ -4,7 +4,8 @@ import { COLORS } from '../../constants/theme';
 import React, { useEffect, useState } from 'react';
 import { supabase } from '../../lib/supabase';
 import { Alert, ScrollView } from 'react-native';
-  
+import { useAuth } from '@/contexts/AuthContext';
+
 const tabScreens = [
   { name: 'index', title: 'Home', icon: 'home' },
   { name: 'learn', title: 'Learn', icon: 'book' },
@@ -15,21 +16,30 @@ const tabScreens = [
 export default function TabLayout() {
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(true);
-
+  const {user, setGlobalUser} = useAuth();
   useEffect(() => {
-    const checkSession = async () => {
-      const { data: { session }, error } = await supabase.auth.getSession();
-      console.log(session);
-      if (error || !session) {
-        // Alert.alert('Session not found, please login');
-        router.replace('/(auth)/login');  // Adjust the route as per your folder structure
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange((event, session) => {
+      console.log('Auth change:', event);
+      if (!session) {
+        // Redirect to login if user signed out or not signed in
+        router.replace('/(auth)/login');
       } else {
-        // If session exists, proceed with the rest of the app
+        setIsLoading(false); // Authenticated
+      }
+    });
+
+    // Get initial session (just in case user is already logged in)
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      if (!session) {
+        router.replace('/(auth)/login');
+      } else {
         setIsLoading(false);
       }
-    };
+    });
 
-    checkSession();
+    return () => subscription.unsubscribe();
   }, []);
   return ( 
     <Tabs
