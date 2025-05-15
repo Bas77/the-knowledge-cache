@@ -150,6 +150,7 @@ const Flashcard = () => {
         <Text style={styles.setTitle}>{item.title}</Text>
         <Text style={styles.setCount}>{item.card_count} cards</Text>
       </View>
+      
       {selectedSet === item.id &&
       (<View style={styles.setItemButtonContainer}>
         <TouchableOpacity><Ionicons name="trash" style={styles.deleteButton} size={32} onPress={() => confirmDelete(item.id)} /></TouchableOpacity>
@@ -164,8 +165,10 @@ const Flashcard = () => {
         })}>
         <Text style={styles.setItemButtonText} >Review</Text></TouchableOpacity>
       </View>)}
+      
     </TouchableOpacity>
   );
+
   if (isLoading) {
     return (
       <View style={[styles.container, styles.loadingContainer]}>

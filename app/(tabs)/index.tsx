@@ -27,13 +27,18 @@ const HomePage = () => {
     }, 1000)
     return () => clearInterval(interval)
   }, [])
-
   useEffect(() => {
     if (isFocused) {
       fetchName()
       fetchSets()
     }
   }, [isFocused])
+  useEffect(() => {
+    if (user) {
+      fetchName()
+      fetchSets()
+    }
+  }, [user])
 
   const fetchName = async () => {
     try {
@@ -66,7 +71,7 @@ const HomePage = () => {
     } catch (error) {
       throw error
     }
-  }
+  };
 
   const getDayName = () => {
     const days = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"]
@@ -129,7 +134,10 @@ const HomePage = () => {
         <Text style={styles.sectionTitle}>Recent Sets</Text>
         {sets.length > 0 ? (
           sets.map((set) => (
-            <TouchableOpacity key={set.set_id} style={styles.setCard} onPress={() => router.push("/(tabs)/flashcard")}>
+            <TouchableOpacity key={set.set_id} style={styles.setCard} onPress={() => router.push({
+              pathname: '../(flashcard)/review',
+              params: {setId: set.set_id }
+              })}>
               <View style={styles.setInfo}>
                 <Text style={styles.setTitle}>{set.sets.title}</Text>
                 <Text style={styles.lastAccessed}>Last accessed: {formatTimeAgo(set.last_accessed)}</Text>
