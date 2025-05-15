@@ -5,6 +5,7 @@ import { COLORS } from '@/constants/theme';
 import { router, useLocalSearchParams } from 'expo-router';
 import { styles } from '@/styles/(flashcard)/review.styles';
 import { supabase } from '@/lib/supabase';
+import { useAuth } from '@/contexts/AuthContext';
 // import {changeNavigationBarColor} from 'react-native-navigation-bar-color';
 const { width } = Dimensions.get('window');
 
@@ -24,6 +25,7 @@ type Flashcard = {
 
 const ReviewPage = () => {
   const {setId} = useLocalSearchParams();
+  const {user, setGlobalUser} = useAuth();
   const [currentIndex, setCurrentIndex] = useState(0);
   const [flipped, setFlipped] = useState(false);
   const [showHelpModal, setShowHelpModal] = useState(false);
@@ -32,6 +34,7 @@ const ReviewPage = () => {
   const flipAnimation = useRef(new Animated.Value(0)).current;
   const slideAnimation = useRef(new Animated.Value(0)).current;
   useEffect(() => {
+        insertLastSeen();
         const fetchCards = async () => {
           try{
           setIsLoading(true);
@@ -53,7 +56,16 @@ const ReviewPage = () => {
         }
         };
         fetchCards();
+        
       }, [setId]);
+  const insertLastSeen = async () =>{
+    const now = new Date().toISOString();
+    const { data, error} = await supabase
+      .from('user_repository')
+      .update({last_accessed: now})
+      .eq('user_id', user?.id)
+      .eq('set_id', setId)
+  }
   // Flip animation
   const flipCard = () => {
     Animated.spring(flipAnimation, {

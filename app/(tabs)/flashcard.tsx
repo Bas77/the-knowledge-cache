@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Modal, View, Text, TouchableOpacity, FlatList, Alert, ActivityIndicator } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import {styles} from '@/styles/flashcard.styles'
+import { styles } from '@/styles/flashcard.styles'
 import { supabase } from '../../lib/supabase';
 import { useAuth } from '@/contexts/AuthContext';
 import { COLORS } from '@/constants/theme';
@@ -101,9 +101,11 @@ const Flashcard = () => {
   };
 
   const handleDelete = async (deleteForEveryone: boolean = false) => {
-    console.log(setToDelete)
-    if (!setToDelete) return;
-
+    console.log('Set to delete: ' ,setToDelete)
+    if (!setToDelete) {
+      Alert.alert('Error deleting set!');
+      return;
+    }
     // console.log(setToDelete);
     try {
       // First remove from user_repository
@@ -222,7 +224,7 @@ const Flashcard = () => {
               
               <TouchableOpacity 
                 style={[styles.modalButton, styles.deleteConfirmButton]}
-                onPress={() => handleDelete}
+                onPress={() => handleDelete(false)}
               >
                 <Text style={styles.deleteConfirmText}>Delete</Text>
               </TouchableOpacity>
