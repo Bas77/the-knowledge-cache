@@ -20,22 +20,15 @@ A mobile application for interactive flashcards with user authentication and clo
 
 
 # Key Features
-- User Authentication (Firebase Auth)
-- CRUD Operations (Firestore Database)
+- User Authentication (Supabase Auth)
+- CRUD Operations (Supabase Database)
 - Cross-Platform (iOS & Android via Expo)
-- React Navigation (Stack/Tab Navigation)
+- React Expo Navigation (Stack/Tab Navigation)
 
 
-# Getting Started  
-
-
-## Prerequisites  
-- Node.js v18+  
-- Expo CLI (`npm install -g expo-cli`)  
-
-
-## Installation  
-```bash
-git clone https://github.com/yourusername/the-knowledge-cache.git
-cd the-knowledge-cache
-npm install
+<p align="center">
+  <img src="https://github.com/user-attachments/assets/19404eac-7d72-4c71-b249-e8bb2ca0c6bb" width="200"/>
+  <img src="https://github.com/user-attachments/assets/7048da89-2c07-491f-a602-cadfb791b6f7" width="200"/>
+  <img src="https://github.com/user-attachments/assets/6e94963a-17c8-415a-9cf3-fbd54a20d239" width="200"/>
+  <img src="https://github.com/user-attachments/assets/19f6fbe2-d83b-4b11-8aea-e49207aa3203" width="200"/>
+</p>
